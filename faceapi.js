@@ -6,7 +6,28 @@ const subscriptionKey = process.env.SUBSCRIPTION_KEY;
 const personGroupId = 'hackday2019';
 
 async function registerFace(img_b64) {
-    let faceId = detectFace(img_b64);
+    var options = {
+        method: 'POST',
+        uri: 'https://' + process.env.FACEAPI_END_POINT + `.com/face/v1.0/facelists/hackday2019/persistedfaces`,
+        body: img_b64, // 生のbinaryを直接送る
+        headers: {
+            'Content-Type': 'application/octet-stream',
+            'Ocp-Apim-Subscription-Key' : subscriptionKey
+        }
+    };
+    // 同期処理にするためにawait
+    try {    
+        let body = await rp(options)
+        let parsedBody = JSON.parse(body)
+        let faceId = parsedBody.persistedFaceId
+        console.log('JSON Response')
+        console.log(parsedBody)
+        console.log(faceId)
+        return faceId;
+    } catch (err) {
+        console.log(err)
+        return;
+    }
 }
 
 // 使わない, not yet
