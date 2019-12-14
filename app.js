@@ -11,6 +11,10 @@ require('dotenv').config();
 const app = express();
 app.use(express.json({ extended: true, limit: '10mb' })); // サイズ上限を10MBに拡張
 
+app.get('/', (req, res) => {
+    res.send("health check ok!");
+});
+
 // 登録API
 app.post('/register', (req, res) => {
     const bodyjson = req.body.data; 
