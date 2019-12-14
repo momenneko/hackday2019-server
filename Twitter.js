@@ -13,20 +13,21 @@ async function getTwitterProfile(username) {
 
     var params = {screen_name: username, count:3};
     let info = await client.get('statuses/user_timeline', params, function(error, tweets, response){
-        if (!error) {
-            var result = {
-                name : tweets[1].user.name,
-                profile : tweets[1].user.description,
-                follow : tweets[1].user.friends_count,
-                Follower : tweets[1].user.followers_count
-            }
-
-            // TODO 本当はココでreturnして値を返したいが、同期処理の仕方が不明 prprmurakami
-            // => 解決
-            console.log(result);
-            return result;
+        if (error) {
+            console.log(error);
+            return null;
         }
-        return null;
+        var result = {
+            name : tweets[1].user.name,
+            profile : tweets[1].user.description,
+            follow : tweets[1].user.friends_count,
+            Follower : tweets[1].user.followers_count
+        }
+
+        // TODO 本当はココでreturnして値を返したいが、同期処理の仕方が不明 prprmurakami
+        // => 解決
+        console.log(result);
+        return result;
     });
     return info;
 }
