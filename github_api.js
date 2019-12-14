@@ -35,13 +35,37 @@ async function fetchLanguages(userName, repoName){ // e.g. "octocat", "Hello-Wor
     }
 }
 
+async function aggregateLanguageInformation(userName, repositories){
+    var allLanguages = {}
+    // 集計
+    for(var i=0; i<repositories.length; i++){
+        const languagesInRepository = await fetchLanguages(userName, repositories[i]);
+        for(var key in languagesInRepository){
+            if (allLanguages[key]){
+                allLanguages[key] += languagesInRepository[key];
+            } else {
+                allLanguages[key] = languagesInRepository[key];
+            }
+        }
+    }
+    // 詰め替え
+    var languageArray = [];
+    for(var key in allLanguages){
+        languageArray.push({
+            "name": key, "value": allLanguages[key]
+        })
+    }
+    languageArray.sort(function(a,b){
+        return b.value - a.value;
+    })
+    return languageArray
+}
+
 async function githubMain(userName){
     const repositories = await fetchRepositories(userName);
-    var languages = {}
-    for(var i=0; i<repositories.length; i++){
-        const languages = await fetchLanguages(userName, repositories[i]);
-        console.log(i,repositories[i],languages)
-    }
+    const languageArray = await aggregateLanguageInformation(userName, repositories);
+    console.log(languageArray)
+    return languageArray
 }
 
 githubMain("qulacs")
