@@ -3,9 +3,7 @@ require('dotenv').config();
 
 // authorization
 var options = {
-    'Authorization': {
-        'token': process.env.GIT_AUTH
-    }
+    'Authorization':  process.env.GIT_AUTH
 };
 
 // get repositories
