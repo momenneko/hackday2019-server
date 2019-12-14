@@ -5,57 +5,49 @@ require('dotenv').config();
 // authorization
 var options = {
     'headers': {
-        'Authorization': process.env.GIT_AUTH
+        'Authorization': process.env.GIT_AUTH // NOTE: add token to .env, or get 403 error! 
     }
 };
 
-
-async function fetchFirstRepo(userName){ // e.g. "octocat"
+async function fetchRepositories(userName){ // e.g. "octocat"
     try {
         const url = `https://api.github.com/users/${userName}/repos`;
         const response = await fetch(url, options);
         const json = await response.json();
-        console.log(json);
-    // return  いい感じreturnしてね
+        var repositories = []
+        for(var i=0; i<json.length; i++){ 
+            repositories.push(json[i].name);
+        }
+        return repositories
     } catch (error) {
         console.log(error);
     }
-    // const hoge = 
-    //     .then(response => {
-    //         console.log(response.status); // => 200
-    //         response.json().then(userInfo => {
-    //         // console.log(userInfo[0].full_name)
-    //         return userInfo[0]. // 1番目のみ取得
-    //     });
-    // });
 }
 
 // get languages
-async function fetchMainLanguage(userName, repoName){ // e.g. "octocat", "Hello-World"
-    fetch(`https://api.github.com/repos/${userName}/${repoName}/languages`, options)
-        .then(response => {
-            console.log(response.status); // => 200
-            response.json().then(repoInfo => {
-            // console.log(Object.keys(repoInfo)[0])
-            return Object.keys(repoInfo)
-        });
-    });
+async function fetchLanguages(userName, repoName){ // e.g. "octocat", "Hello-World"
+    try {
+        const url = `https://api.github.com/repos/${userName}/${repoName}/languages`;
+        const response = await fetch(url, options);
+        return await response.json();
+    } catch (error) {
+        console.log(error);
+    }
 }
 
-async function main(userName){
-    // fetchFirstRepoを、undefinedが入らないようにしたい
-    const repoName = await fetchFirstRepo(userName);
-    console.log(repoName)
-    // repoNameに値が入るのを待って、次の処理を行いたい
-    // const mainLang = await fetchMainLanguage(userName, repoName);
-    // console.log(mainLang)
-    // return mainLang
+async function githubMain(userName){
+    const repositories = await fetchRepositories(userName);
+    var languages = {}
+    for(var i=0; i<repositories.length; i++){
+        const languages = await fetchLanguages(userName, repositories[i]);
+        console.log(i,repositories[i],languages)
+    }
 }
 
-main("qulacs")
+githubMain("qulacs")
 
 module.exports = { 
-    main: main
+    githubMain: githubMain
   };
 
  
