@@ -3,7 +3,7 @@ require('dotenv').config();
 
 // face API settings
 const subscriptionKey = process.env.SUBSCRIPTION_KEY;
-const faceListId = 'hackday2019';
+const defaultFaceListId = 'hackday2019';
 
 async function registerFace(img_b64) {
     return null;
@@ -25,6 +25,7 @@ function createPersonGroup(group_name) {
         }
     };
 }
+
 
 // base64の画像からpersonIdを取得
 async function detectFace(img_b64) {
@@ -52,11 +53,9 @@ async function detectFace(img_b64) {
         console.log(parsedBody.faceId)
         console.log('detect face')
         
-        let personId = await findFromFaceList(faceId, faceListId) 
         console.log(`faceId: ${faceId}`)
-        // console.log(personId);
         
-        return;
+        return faceId;
     } catch (err) {
         console.log(err)
         return;
@@ -64,7 +63,7 @@ async function detectFace(img_b64) {
 }
 
 // faceidからpersonidを取得
-async function findFromFaceList(faceId, faceListId) {
+async function findFromFaceList(faceId, faceListId = defaultFaceListId) {
     const body = JSON.stringify(
         {
             faceId: faceId,
@@ -116,5 +115,6 @@ module.exports={
    foo: foo,
    registerFace: registerFace,
    detectFace: detectFace,
+   find: findFromFaceList,
    createPersonGroup: createPersonGroup
 };

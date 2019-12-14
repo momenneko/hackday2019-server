@@ -50,15 +50,17 @@ async function registerUser(face_b64, twitter_id, github_id) {
     }
 }
 
+
 // 顔識別&情報取得API
 app.post('/detect', (req, res) => {
     const bodyjson = req.body.data;
     // const faceImage = bodyjson.face_image;
     // const faceImage = Buffer.from(bodyjson.face_imageface_image, 'base64');
     const faceImage = fs.readFileSync('./image/hashimoto_gopher.png'); // ローカルから読み込む場合
-    const faceId = face.detectFace(faceImage).then(val => console.log(val));
-
-    console.log(bodyjson);
+    const persistedFaceId = face.detectFace(faceImage)
+        .then(faceId => face.find(faceId));
+    
+    console.log(persistedFaceId);
 
     res.send("ok");
 })
