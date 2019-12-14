@@ -5,6 +5,7 @@ let request = require('request');
 let face = require('./faceapi.js');
 let github = require('./github_api.js');
 let twitter = require('./twitter.js');
+let db = require('./operateDB.js');
 require('dotenv').config();
 
 const app = express();
@@ -12,22 +13,34 @@ app.use(express.json({ extended: true, limit: '10mb' })); // サイズ上限を1
 
 // 登録API
 app.post('/', (req, res) => {
-    // const bodyjson = req.body.data; 
-    // const username = bodyjson.name;
-    // const twitter_id = bodyjson.twitter_id;
-    // const github_id = bodyjson.github_id;
-    // const face_image = bodyjson.face_image;
-    let face_b64 =  fs.readFileSync('./face_images/hashimoto.JPG');
+    const bodyjson = req.body.data; 
+    const username = bodyjson.name;
+    const twitter_id = bodyjson.twitter_id;
+    const github_id = bodyjson.github_id;
+    const face_image = bodyjson.face_image;
+    
+    // let face_b64 =  fs.readFileSync('./face_images/hashimoto.JPG');
+    const face_b64 = fs.readFileSync('./face_images/hashimoto_gopher.png');
     // let face_b64 = Buffer.from(face_image, 'base64');
+
     // faceAPIに問い合わせ
     // asyncの即時関数で囲んでやる https://qiita.com/yukin01/items/1a36606439123525dc6d
     (async() => {
         let faceId = await face.registerFace(face_b64);
-        let response = JSON.stringify({ "faceId": faceId })
-        console.log(response.faceId);
-        res.send(response);
+        let twitter_info = await twitter.getTwitterProfile(twitter_id);
+        let github_info = await github.githubMain(github_id);
+
+        console.log(faceId);
+        console.log(twitter_info);
+        console.log(github_info);
+        
+        let saved = await db.register(faceId, username, twitter_info, github_info);
+        
+        // TODO: error handling
+        // let response = JSON.stringify({});
+        // res.send(response);
+        res.send("OK");
     })()    
-    // let twitter_info = twitter.getTwitterProfile(twitter_id).then(val => console.log(val));
     // let github_info =  
 
 });

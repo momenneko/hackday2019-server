@@ -64,11 +64,11 @@ async function aggregateLanguageInformation(userName, repositories){
 async function githubMain(userName){
     const repositories = await fetchRepositories(userName);
     const languageArray = await aggregateLanguageInformation(userName, repositories);
-    console.log(languageArray)
+    // console.log(languageArray)
     return languageArray
 }
 
-githubMain("qulacs")
+// githubMain("qulacs")
 
 module.exports = { 
     githubMain: githubMain
