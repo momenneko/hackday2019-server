@@ -2,7 +2,7 @@
 var twitter = require('twitter');
 require('dotenv').config();
 
-exports.getTwitterProfile = function a(username) { 
+async function getTwitterProfile(username) { 
     // 認証情報を設定（Twitter Appで発行したものを設定）
     const client = new twitter({
         consumer_key: process.env.CONSUMER_KEY,
@@ -12,7 +12,7 @@ exports.getTwitterProfile = function a(username) {
     })
 
     var params = {screen_name: username, count:3};
-    client.get('statuses/user_timeline', params, function(error, tweets, response){
+    let info = await client.get('statuses/user_timeline', params, function(error, tweets, response){
         if (!error) {
             var result = {
                 name : tweets[1].user.name,
@@ -22,7 +22,16 @@ exports.getTwitterProfile = function a(username) {
             }
 
             // TODO 本当はココでreturnして値を返したいが、同期処理の仕方が不明 prprmurakami
-            console.log(result);        
+            // => 解決
+            console.log(result);
+            return result;
         }
+        return null;
     });
+    return info;
 }
+
+module.exports={
+    getTwitterProfile: getTwitterProfile
+ };
+ 

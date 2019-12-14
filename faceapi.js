@@ -9,7 +9,7 @@ async function registerFace(img_b64) {
     let faceId = detectFace(img_b64);
 }
 
-// 使わない
+// 使わない, not yet
 function createPersonGroup(group_name) { 
     let body = JSON.parse({"name": group_name}); 
     let personGroupId = group_name + Date.now;
@@ -26,6 +26,7 @@ function createPersonGroup(group_name) {
     };
 }
 
+// base64の画像からpersonIdを取得
 async function detectFace(img_b64) {
     const options = {
         method: 'POST',
@@ -49,14 +50,16 @@ async function detectFace(img_b64) {
         
         let personId = await identityFace([faceId], personGroupId) 
         console.log(`faceId: ${faceId}`)
+        console.log(personId);
         
-        return faceId;
+        return personId;
     } catch (err) {
         console.log(err)
         return;
     }    
 }
 
+// faceidからpersonidを取得
 async function identityFace(faceIds, personGroupId) { 
     const body = JSON.parse(
         {
@@ -82,14 +85,16 @@ async function identityFace(faceIds, personGroupId) {
         let body = await rp(options)
         let parsedBody = JSON.parse(body)
 
-        // let faceId = parsedBody[0] ? parsedBody[0].faceId : null
+        if (parsedBody == null) {
+            throw new Error('face is not registered');
+        }
         
+        let personId = parsedBody[0].candidates[0].personId
+
         console.log('JSON Response')
         console.log(parsedBody)
         
-        // console.log(`faceId: ${faceId}`)
-        
-        return;
+        return personId;
     } catch (err) {
         console.log(err)
         return;
@@ -102,5 +107,7 @@ let foo = () => {
 
 module.exports={
    foo: foo,
-   registerFace: registerFace
+   registerFace: registerFace,
+   detectFace: detectFace,
+   createPersonGroup: createPersonGroup
 };
