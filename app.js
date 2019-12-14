@@ -57,11 +57,13 @@ app.post('/detect', (req, res) => {
     // const faceImage = Buffer.from(bodyjson.face_imageface_image, 'base64');
     const faceImage = fs.readFileSync('./image/hashimoto_gopher.png'); // ローカルから読み込む場合
     const persistedFaceId = face.detectFace(faceImage)
-        .then(faceId => face.find(faceId));
-    
-    console.log(persistedFaceId);
+        .then(faceId => {
+            return face.find(faceId);
+        }).then(persistedFaceId => {
+            console.log(`detect ---------${persistedFaceId}`);
 
-    res.send("ok");
+            res.send(persistedFaceId);
+        });
 })
 
 // persongroup作成API : not yet

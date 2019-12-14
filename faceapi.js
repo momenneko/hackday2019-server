@@ -78,6 +78,7 @@ async function detectFace(img_b64) {
         
         return faceId;
     } catch (err) {
+        console.log('detect----')
         console.log(err)
         return;
     }    
@@ -85,16 +86,17 @@ async function detectFace(img_b64) {
 
 // faceidからpersonidを取得
 async function findFromFaceList(faceId, faceListId = defaultFaceListId) {
-    const body = JSON.stringify(
-        {
+    console.log(faceId, faceListId);
+    if (faceId == null ) {
+        console.log('faceId is null');
+    }
+    const body = 
+        JSON.stringify({
             faceId: faceId,
             faceListId: faceListId,
-            maxNumOfCandidatesReturned: 5,
-            mode: "matchPerson"
+            // maxNumOfCandidatesReturned: 10,
+            mode: "matchFace" // 似ている人を探す
         });
-    // console.log('------')
-    // console.log(body);
-    // console.log('------')
 
     const options = {
         method: 'POST',
@@ -103,8 +105,7 @@ async function findFromFaceList(faceId, faceListId = defaultFaceListId) {
             'Content-Type': 'application/json',
             'Ocp-Apim-Subscription-Key' : subscriptionKey
         },
-        body: body,
-        json: true
+        body: body
     };
     
     // 同期処理にするためにawait
@@ -116,13 +117,14 @@ async function findFromFaceList(faceId, faceListId = defaultFaceListId) {
             throw new Error('face is not registered');
         }
         
-        let faceId = parsedBody[0].faceId
+        let persistedFaceId = parsedBody[0].persistedFaceId
         
         console.log('JSON Response')
-        console.log(parsedBody.body)
+        console.log(parsedBody)
         
-        return faceId;
+        return persistedFaceId;
     } catch (err) {
+        console.log('find error----')
         console.log(err)
         return;
     }
