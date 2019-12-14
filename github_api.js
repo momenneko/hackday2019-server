@@ -22,11 +22,11 @@ function getFirstRepo(username){ // e.g. octocat
 function getMainLanguage(full_name){ // e.g. octocat/Hello-World
 
     // mock responce
-    const lang_str = '{"Scala": 78769, "Python": 7769}'
+    const lang_str = '{"Go": 78769, "Scala": 7769}'
     const lang_obj = JSON.parse(lang_str);
     return Object.keys(lang_obj)[0] // -> Scala
 
-    // actural code
+    // actural responce
     // fetch(`https://api.github.com/repos/${full_name}/languages`)
     //     .then(response => {
     //         console.log(response.status); // => 200
