@@ -3,7 +3,9 @@ require('dotenv').config();
 
 // authorization
 var options = {
-    'Authorization':  process.env.GIT_AUTH
+    'headers': {
+        'Authorization': process.env.GIT_AUTH
+    }
 };
 
 // get repositories
@@ -11,9 +13,9 @@ function getFirstRepo(user_name){ // e.g. "octocat"
     fetch(`https://api.github.com/users/${user_name}/repos`, options)
         .then(response => {
             console.log(response.status); // => 200
-                response.json().then(userInfo => {
-                // console.log(userInfo[0].full_name)
-                return userInfo[0].full_name // 1番目のみ取得?
+            response.json().then(userInfo => {
+            // console.log(userInfo[0].full_name)
+            return userInfo[0].full_name // 1番目のみ取得
         });
     });
 }
