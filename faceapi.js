@@ -3,12 +3,12 @@ require('dotenv').config();
 
 // face API settings
 const subscriptionKey = process.env.SUBSCRIPTION_KEY;
-const defaultFaceListId = 'hackday2019';
+const defaultFaceListId = process.env.DEVELOP_FACELIST_ID;
 
-async function registerFace(img_b64) {
+async function registerFace(img_b64, faceListId = defaultFaceListId) {
     var options = {
         method: 'POST',
-        uri: 'https://' + process.env.FACEAPI_END_POINT + `.com/face/v1.0/facelists/hackday2019/persistedfaces`,
+        uri: 'https://' + process.env.FACEAPI_END_POINT + `.com/face/v1.0/facelists/${faceListId}/persistedfaces`,
         body: img_b64, // 生のbinaryを直接送る
         headers: {
             'Content-Type': 'application/octet-stream',
