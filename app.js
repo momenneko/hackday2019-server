@@ -4,6 +4,7 @@ let fs = require("fs");
 let request = require('request');
 let face = require('./faceapi.js');
 let twitter = require('./Twitter.js');
+let github = require('./github_api.js');
 require('dotenv').config();
 
 const app = express();
@@ -28,17 +29,37 @@ app.post('/', (req, res) => {
     })()    
     // let twitter_info = twitter.getTwitterProfile(twitter_id).then(val => console.log(val));
     // let github_info =  
+
 });
+
+async function registerUser(face_b64, twitter_id, github_id) {
+    try {
+        const faceId = await face.registerFace(face_b64);
+        if (faceId == null) {
+            throw new Error('face is not found');
+        }
+        const [twitter_info] = await Promise.all(
+            [twitter.getTwitterProfile(twitter_id)]);
+        
+        // DBに保存
+        return;
+    } catch (err) {
+        console.log(err);
+        return;
+    }
+}
+
 
 // 顔識別&情報取得API
 app.post('/detect', (req, res) => {
     const bodyjson = req.body.data;
     // const faceImage = bodyjson.face_image;
-    const faceImage = Buffer.from(bodyjson.face_imageface_image, 'base64');
+    // const faceImage = Buffer.from(bodyjson.face_imageface_image, 'base64');
+    const faceImage = fs.readFileSync('./image/hashimoto_gopher.png'); // ローカルから読み込む場合
+    const persistedFaceId = face.detectFace(faceImage)
+        .then(faceId => face.find(faceId));
     
-    const faceId = face.detectFace(faceImage).then(val => console.log(val));
-
-    console.log(bodyjson);
+    console.log(persistedFaceId);
 
     res.send("ok");
 })

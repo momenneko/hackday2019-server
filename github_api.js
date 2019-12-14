@@ -3,26 +3,26 @@ require('dotenv').config();
 
 // authorization
 var options = {
-    'Authorization': {
-        'token': process.env.GIT_AUTH
+    'headers': {
+        'Authorization': process.env.GIT_AUTH
     }
 };
 
 // get repositories
-function getFirstRepo(user_name){ // e.g. "octocat"
-    fetch(`https://api.github.com/users/${user_name}/repos`, options)
+async function fetchFirstRepo(userName){ // e.g. "octocat"
+    fetch(`https://api.github.com/users/${userName}/repos`, options)
         .then(response => {
             console.log(response.status); // => 200
-                response.json().then(userInfo => {
-                // console.log(userInfo[0].full_name)
-                return userInfo[0].full_name // 1番目のみ取得?
+            response.json().then(userInfo => {
+            // console.log(userInfo[0].full_name)
+            return userInfo[0].full_name // 1番目のみ取得
         });
     });
 }
 
 // get languages
-function getMainLanguage(user_name, repo_name){ // e.g. "octocat", "Hello-World"
-    fetch(`https://api.github.com/repos/${user_name}/${repo_name}/languages`, options)
+async function fetchMainLanguage(userName, repoName){ // e.g. "octocat", "Hello-World"
+    fetch(`https://api.github.com/repos/${userName}/${repoName}/languages`, options)
         .then(response => {
             console.log(response.status); // => 200
                 response.json().then(repoInfo => {
@@ -32,5 +32,16 @@ function getMainLanguage(user_name, repo_name){ // e.g. "octocat", "Hello-World"
     });
 }
 
-console.log(getFirstRepo("qulacs"))
-console.log(getMainLanguage("qulacs", "cirq-qulacs"))
+async function main(userName){
+    const repoName = fetchFirstRepo(userName);
+    const mainLang = fetchMainLanguage(userName, repoName);
+    return 
+}
+
+main("qulacs")
+
+module.exports = { 
+    main: main
+  };
+
+ 

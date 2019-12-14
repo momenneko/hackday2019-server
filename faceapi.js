@@ -3,7 +3,7 @@ require('dotenv').config();
 
 // face API settings
 const subscriptionKey = process.env.SUBSCRIPTION_KEY;
-const personGroupId = 'hackday2019';
+const defaultFaceListId = 'hackday2019';
 
 async function registerFace(img_b64) {
     var options = {
@@ -47,6 +47,7 @@ function createPersonGroup(group_name) {
     };
 }
 
+
 // base64の画像からpersonIdを取得
 async function detectFace(img_b64) {
     const options = {
@@ -65,15 +66,17 @@ async function detectFace(img_b64) {
         let parsedBody = JSON.parse(body)
 
         let faceId = parsedBody[0] ? parsedBody[0].faceId : null
-        
+        if (parsedBody == null) {
+            throw new Error('face cannot be deteced');
+        }
+
         console.log('JSON Response')
-        console.log(parsedBody)
+        console.log(parsedBody.faceId)
+        console.log('detect face')
         
-        let personId = await identityFace([faceId], personGroupId) 
         console.log(`faceId: ${faceId}`)
-        console.log(personId);
         
-        return personId;
+        return faceId;
     } catch (err) {
         console.log(err)
         return;
@@ -81,24 +84,27 @@ async function detectFace(img_b64) {
 }
 
 // faceidからpersonidを取得
-async function identityFace(faceIds, personGroupId) { 
-    const body = JSON.parse(
+async function findFromFaceList(faceId, faceListId = defaultFaceListId) {
+    const body = JSON.stringify(
         {
-            "personGroupId": personGroupId,
-            "faceIds": faceIds,
-            // "maxNumOfCandidatesReturned": 1,
-            // "confidenceThreshold": 0.5
-        }
-    );
-    console.log(body);
+            faceId: faceId,
+            faceListId: faceListId,
+            maxNumOfCandidatesReturned: 5,
+            mode: "matchPerson"
+        });
+    // console.log('------')
+    // console.log(body);
+    // console.log('------')
+
     const options = {
         method: 'POST',
-        uri: 'https://' + process.env.FACEAPI_END_POINT + '.com/face/v1.0/identify',
-        body: body,
+        uri: 'https://' + process.env.FACEAPI_END_POINT + '.com/face/v1.0/findsimilars',
         headers: {
             'Content-Type': 'application/json',
             'Ocp-Apim-Subscription-Key' : subscriptionKey
-        }
+        },
+        body: body,
+        json: true
     };
     
     // 同期処理にするためにawait
@@ -110,16 +116,16 @@ async function identityFace(faceIds, personGroupId) {
             throw new Error('face is not registered');
         }
         
-        let personId = parsedBody[0].candidates[0].personId
-
-        console.log('JSON Response')
-        console.log(parsedBody)
+        let faceId = parsedBody[0].faceId
         
-        return personId;
+        console.log('JSON Response')
+        console.log(parsedBody.body)
+        
+        return faceId;
     } catch (err) {
         console.log(err)
         return;
-    }    
+    }
 }
 
 let foo = () => {
@@ -130,5 +136,6 @@ module.exports={
    foo: foo,
    registerFace: registerFace,
    detectFace: detectFace,
+   find: findFromFaceList,
    createPersonGroup: createPersonGroup
 };
