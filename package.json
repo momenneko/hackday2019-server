@@ -21,6 +21,7 @@
     "express": "^4.17.1",
     "node-fetch": "^2.6.0",
     "request": "^2.88.0",
-    "request-promise": "^4.2.5"
+    "request-promise": "^4.2.5",
+    "twitter": "^1.7.1"
   }
 }
