@@ -5,7 +5,8 @@ require('dotenv').config();
 // authorization
 var options = {
     'headers': {
-        'Authorization': process.env.GIT_AUTH // NOTE: add token to .env, or get 403 error! 
+        // NOTE: Add token to .env, or get 403 error! 
+        'Authorization': process.env.GIT_AUTH
     }
 };
 
@@ -67,8 +68,6 @@ async function githubMain(userName){
     console.log(languageArray)
     return languageArray
 }
-
-githubMain("qulacs")
 
 module.exports = { 
     githubMain: githubMain
