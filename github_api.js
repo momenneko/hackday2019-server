@@ -1,3 +1,4 @@
+'use strict';
 const fetch = require("node-fetch");
 require('dotenv').config();
 
@@ -25,17 +26,19 @@ async function fetchMainLanguage(userName, repoName){ // e.g. "octocat", "Hello-
     fetch(`https://api.github.com/repos/${userName}/${repoName}/languages`, options)
         .then(response => {
             console.log(response.status); // => 200
-                response.json().then(repoInfo => {
-                // console.log(Object.keys(repoInfo)[0])
-                return Object.keys(repoInfo)[0] // 1番目だけ取得
+            response.json().then(repoInfo => {
+            // console.log(Object.keys(repoInfo)[0])
+            return Object.keys(repoInfo)[0] // 1番目だけ取得
         });
     });
 }
 
-async function main(userName){
+function main(userName){
+    // fetchFirstRepoを、undefinedが入らないようにしたい
     const repoName = fetchFirstRepo(userName);
+    // repoNameに値が入るのを待って、次の処理を行いたい
     const mainLang = fetchMainLanguage(userName, repoName);
-    return 
+    return mainLang
 }
 
 main("qulacs")
