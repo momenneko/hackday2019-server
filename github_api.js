@@ -28,7 +28,7 @@ async function fetchMainLanguage(userName, repoName){ // e.g. "octocat", "Hello-
             console.log(response.status); // => 200
             response.json().then(repoInfo => {
             // console.log(Object.keys(repoInfo)[0])
-            return Object.keys(repoInfo)[0] // 1番目だけ取得
+            return Object.keys(repoInfo)
         });
     });
 }
