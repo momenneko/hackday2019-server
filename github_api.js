@@ -15,11 +15,11 @@ async function fetchRepositories(userName){ // e.g. "octocat"
         const url = `https://api.github.com/users/${userName}/repos`;
         const response = await fetch(url, options);
         const json = await response.json();
-        var repositories = []
+        var repositories = [];
         for(var i=0; i<json.length; i++){ 
             repositories.push(json[i].name);
         }
-        return repositories
+        return repositories;
     } catch (error) {
         console.log(error);
     }
@@ -59,18 +59,16 @@ async function aggregateLanguageInformation(userName, repositories){
     languageArray.sort(function(a,b){
         return b.value - a.value;
     })
-    return languageArray
+    return languageArray;
 }
 
+// main function
 async function githubMain(userName){
     const repositories = await fetchRepositories(userName);
     const languageArray = await aggregateLanguageInformation(userName, repositories);
-    // console.log(languageArray)
-    return languageArray
+    return languageArray;
 }
 
 module.exports = { 
     githubMain: githubMain
   };
-
- 
