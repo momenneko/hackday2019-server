@@ -1,14 +1,15 @@
-exports.getTwitterProfile = async function a(username) { 
-    // twitterパッケージの読み込み
-    var twitter = require('twitter');
 
+var twitter = require('twitter');
+require('dotenv').config();
+
+exports.getTwitterProfile = function a(username) { 
     // 認証情報を設定（Twitter Appで発行したものを設定）
-    var client = new twitter({
-    consumer_key        : "XU8is3dIjiGOfVXhgN711aDwh",
-    consumer_secret     : "y5iFgAJl7OL28OTt1TChHuPY9LaRgqLpDdOPCpiWfG0EE4lIEK",
-    access_token_key    : "1201471226905890816-yyLS6c1zhlEQY6Lto1ypeenFxMS8o6",
-    access_token_secret : "RPOHtAjc01ntND7DFz9v1hsR7cLtnZeblxRQiI9XeIkfP"
-    });
+    const client = new twitter({
+        consumer_key: process.env.CONSUMER_KEY,
+        consumer_secret: process.env.CONSUMER_SECRET,
+        access_token_key: process.env.ACCESS_TOKEN_KEY,
+        access_token_secret: process.env.ACCESS_TOKEN_SECRET
+    })
 
     var params = {screen_name: username, count:3};
     client.get('statuses/user_timeline', params, function(error, tweets, response){
@@ -19,26 +20,9 @@ exports.getTwitterProfile = async function a(username) {
                 follow : tweets[1].user.friends_count,
                 Follower : tweets[1].user.followers_count
             }
-            return result;
+
+            // TODO 本当はココでreturnして値を返したいが、同期処理の仕方が不明 prprmurakami
+            console.log(result);        
         }
     });
 }
-
-
-// // twitterパッケージの読み込み
-// var twitter = require('twitter');
-
-// // 認証情報を設定（Twitter Appで発行したものを設定）
-// var client = new twitter({
-// consumer_key        : "XU8is3dIjiGOfVXhgN711aDwh",
-// consumer_secret     : "y5iFgAJl7OL28OTt1TChHuPY9LaRgqLpDdOPCpiWfG0EE4lIEK",
-// access_token_key    : "1201471226905890816-yyLS6c1zhlEQY6Lto1ypeenFxMS8o6",
-// access_token_secret : "RPOHtAjc01ntND7DFz9v1hsR7cLtnZeblxRQiI9XeIkfP"
-// });
-
-// var params = {screen_name: 'prprmurakami', count:3};
-// client.get('statuses/user_timeline', params, function(error, tweets, response){
-//     if (!error) {
-//         console.log(tweets);
-//       }
-// });
