@@ -9,8 +9,8 @@ var options = {
 };
 
 // get repositories
-function getFirstRepo(user_name){ // e.g. "octocat"
-    fetch(`https://api.github.com/users/${user_name}/repos`, options)
+async function fetchFirstRepo(userName){ // e.g. "octocat"
+    fetch(`https://api.github.com/users/${userName}/repos`, options)
         .then(response => {
             console.log(response.status); // => 200
             response.json().then(userInfo => {
@@ -21,8 +21,8 @@ function getFirstRepo(user_name){ // e.g. "octocat"
 }
 
 // get languages
-function getMainLanguage(user_name, repo_name){ // e.g. "octocat", "Hello-World"
-    fetch(`https://api.github.com/repos/${user_name}/${repo_name}/languages`, options)
+async function fetchMainLanguage(userName, repoName){ // e.g. "octocat", "Hello-World"
+    fetch(`https://api.github.com/repos/${userName}/${repoName}/languages`, options)
         .then(response => {
             console.log(response.status); // => 200
                 response.json().then(repoInfo => {
@@ -32,5 +32,16 @@ function getMainLanguage(user_name, repo_name){ // e.g. "octocat", "Hello-World"
     });
 }
 
-console.log(getFirstRepo("qulacs"))
-console.log(getMainLanguage("qulacs", "cirq-qulacs"))
+async function main(userName){
+    const repoName = fetchFirstRepo(userName);
+    const mainLang = fetchMainLanguage(userName, repoName);
+    return 
+}
+
+main("qulacs")
+
+module.exports = { 
+    main: main
+  };
+
+ 
