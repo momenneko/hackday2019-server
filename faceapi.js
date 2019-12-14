@@ -15,6 +15,7 @@ async function registerFace(img_b64) {
             'Ocp-Apim-Subscription-Key' : subscriptionKey
         }
     };
+
     // 同期処理にするためにawait
     try {    
         let body = await rp(options)
@@ -47,7 +48,6 @@ function createPersonGroup(group_name) {
     };
 }
 
-
 // base64の画像からpersonIdを取得
 async function detectFace(img_b64) {
     const options = {
@@ -65,20 +65,19 @@ async function detectFace(img_b64) {
         let body = await rp(options)
         let parsedBody = JSON.parse(body)
 
-        let faceId = parsedBody[0] ? parsedBody[0].faceId : null
         if (parsedBody == null) {
             throw new Error('face cannot be deteced');
         }
-
-        console.log('JSON Response')
-        console.log(parsedBody.faceId)
-        console.log('detect face')
         
+        console.log('DETECT FACE : JSON Response')
+        console.log(parsedBody)
+        
+        let faceId = parsedBody[0].faceId
         console.log(`faceId: ${faceId}`)
         
         return faceId;
     } catch (err) {
-        console.log('detect----')
+        console.log('detect error----')
         console.log(err)
         return;
     }    
@@ -135,7 +134,6 @@ let foo = () => {
 }
 
 module.exports={
-   foo: foo,
    registerFace: registerFace,
    detectFace: detectFace,
    find: findFromFaceList,
