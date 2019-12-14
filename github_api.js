@@ -9,16 +9,25 @@ var options = {
     }
 };
 
-// get repositories
+
 async function fetchFirstRepo(userName){ // e.g. "octocat"
-    fetch(`https://api.github.com/users/${userName}/repos`, options)
-        .then(response => {
-            console.log(response.status); // => 200
-            response.json().then(userInfo => {
-            // console.log(userInfo[0].full_name)
-            return userInfo[0].full_name // 1番目のみ取得
-        });
-    });
+    try {
+        const url = `https://api.github.com/users/${userName}/repos`;
+        const response = await fetch(url, options);
+        const json = await response.json();
+        console.log(json);
+    // return  いい感じreturnしてね
+    } catch (error) {
+        console.log(error);
+    }
+    // const hoge = 
+    //     .then(response => {
+    //         console.log(response.status); // => 200
+    //         response.json().then(userInfo => {
+    //         // console.log(userInfo[0].full_name)
+    //         return userInfo[0]. // 1番目のみ取得
+    //     });
+    // });
 }
 
 // get languages
@@ -33,12 +42,14 @@ async function fetchMainLanguage(userName, repoName){ // e.g. "octocat", "Hello-
     });
 }
 
-function main(userName){
+async function main(userName){
     // fetchFirstRepoを、undefinedが入らないようにしたい
-    const repoName = fetchFirstRepo(userName);
+    const repoName = await fetchFirstRepo(userName);
+    console.log(repoName)
     // repoNameに値が入るのを待って、次の処理を行いたい
-    const mainLang = fetchMainLanguage(userName, repoName);
-    return mainLang
+    // const mainLang = await fetchMainLanguage(userName, repoName);
+    // console.log(mainLang)
+    // return mainLang
 }
 
 main("qulacs")
