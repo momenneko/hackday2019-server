@@ -23,10 +23,15 @@ async function get(faceId) {
     const strTwitterInfo = await getAsync("twitter-" + faceId);
     const strGitInfo = await getAsync("git-" + faceId);
 
-    twitterInfo = JSON.parse(strTwitterInfo);
-    gitInfo = JSON.parse(strGitInfo);
-
-    return {name, twitterInfo, gitInfo}
+    console.log('aaa')
+    if (twitterInfo) {
+        twitterInfo = JSON.parse(strTwitterInfo);
+    }
+    if (gitInfo) {
+        gitInfo = JSON.parse(strGitInfo);
+    }
+    console.log('b')
+    return {name, twitterInfo, gitInfo};
 }
 
 module.exports={

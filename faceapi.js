@@ -17,7 +17,7 @@ async function registerFace(img_b64, faceListId = defaultFaceListId) {
     };
 
     // 同期処理にするためにawait
-    try {    
+    try {
         let body = await rp(options)
         let parsedBody = JSON.parse(body)
         let faceId = parsedBody.persistedFaceId
