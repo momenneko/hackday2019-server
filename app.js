@@ -4,7 +4,7 @@ let fs = require("fs");
 let request = require('request');
 let face = require('./faceapi.js');
 let github = require('./github_api.js');
-let twitter = require('./Twitter.js');
+let twitter = require('./twitter.js');
 let db = require('./operateDB.js');
 require('dotenv').config();
 
