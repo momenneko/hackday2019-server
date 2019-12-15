@@ -119,7 +119,6 @@ app.post('/getinfo', (req, res) => {
         });
 })
 
-// persongroup作成API : not yet
 app.post('/create/person-group', (req, res) => {
     const bodyjson = req.body.data;
     const groupName = bodyjson.name;
