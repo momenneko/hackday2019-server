@@ -12,8 +12,12 @@ async function register(faceId, name, twitterInfo, gitInfoList){
     });
     
     client.set("name-" + faceId, name, redis.print);
-    client.set("twitter-" + faceId, JSON.stringify(twitterInfo), redis.print);
-    client.set("git-" + faceId, JSON.stringify(gitInfoList), redis.print)
+    if (twitterInfo) {
+        client.set("twitter-" + faceId, JSON.stringify(twitterInfo), redis.print);
+    }
+    if (gitInfoList) {
+        client.set("git-" + faceId, JSON.stringify(gitInfoList), redis.print);
+    }
     client.quit();
 }
 
@@ -23,15 +27,18 @@ async function get(faceId) {
     const strTwitterInfo = await getAsync("twitter-" + faceId);
     const strGitInfo = await getAsync("git-" + faceId);
 
-    console.log('aaa')
-    if (twitterInfo) {
-        twitterInfo = JSON.parse(strTwitterInfo);
+    var twitter_info = {};
+    var git_info = {};
+
+    // undefined対策
+    if (strTwitterInfo != 'undefined') {
+        twitter_info = JSON.parse(strTwitterInfo);
     }
-    if (gitInfo) {
-        gitInfo = JSON.parse(strGitInfo);
+    if (git_info != 'undefined') {
+        git_info = JSON.parse(strGitInfo);
     }
-    console.log('b')
-    return {name, twitterInfo, gitInfo};
+
+    return {name, twitter_info, git_info};
 }
 
 module.exports={
