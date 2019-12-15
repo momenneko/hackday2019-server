@@ -25,15 +25,15 @@ app.post('/register', (req, res) => {
 
     // let face_b64 =  fs.readFileSync('./face_images/hashimoto.JPG');
     // const face_b64 = fs.readFileSync('./face_images/hashimoto_gopher.png');    
-    const face_b64 = fs.readFileSync('./face_images/kikuchi.JPG');
-    // let face_b64 = Buffer.from(face_image, 'base64');
+    // const face_b64 = fs.readFileSync('./face_images/kikuchi4.JPG');
+    let face_b64 = Buffer.from(face_image, 'base64');
 
     // faceAPIに問い合わせ
     // asyncの即時関数で囲んでやる https://qiita.com/yukin01/items/1a36606439123525dc6d
     face.registerFace(face_b64).catch(err => {            
             let error = {
                 data: {
-                    error: 'FACE IS NOT FOUND'
+                    error: 'face is not found.'
                 }
             }
             res.send(error);
@@ -57,49 +57,58 @@ app.post('/register', (req, res) => {
 });
 
 async function getInfoFromAPI(faceId, twitter_id, github_id) {
-    // let [twitter_info, github_info] = await Promise.all(
-    //     [twitter.getTwitterProfile(twitter_id),
-    //     github.githubMain(github_id)]);
-    let twitter_info = twitter.getTwitterProfile(twitter_id);
-    let github_info = github.githubMain(github_id);
-        console.log(twitter_info)
+    let [twitter_info, github_info] = await Promise.all(
+        [twitter.getTwitterProfile(twitter_id),
+        github.githubMain(github_id)]);
+    // let twitter_info = await twitter.getTwitterProfile(twitter_id);
+    // let github_info = await github.githubMain(github_id);
         console.log(`1twitter: ${twitter_info}`);
         console.log(`1github: ${github_info}`);
         return {faceId, twitter_info, github_info};
 }
-async function registerUser(face_b64, twitter_id, github_id) {
-    try {
-        const faceId = await face.registerFace(face_b64);
-        if (faceId == null) {
-            throw new Error('face is not found');
-        }
-        const [twitter_info] = await Promise.all(
-            [twitter.getTwitterProfile(twitter_id)]);
-        
-        // DBに保存
-        return;
-    } catch (err) {
-        console.log(err);
-        return;
-    }
-}
+
 
 // 顔識別&情報取得API
-app.get('/getinfo', (req, res) => {
+app.post('/getinfo', (req, res) => {
     const bodyjson = req.body.data;
-    // const faceImage = bodyjson.face_image;
-    // const faceImage = Buffer.from(bodyjson.face_image, 'base64');
+    const faceImage = Buffer.from(bodyjson.face_image, 'base64');
     // const faceImage = fs.readFileSync('./face_images/hashimoto_gopher.png'); // ローカルから読み込む場合
-    const faceImage = fs.readFileSync('./face_images/kikuchi.JPG');
+    // const faceImage = fs.readFileSync('./face_images/kikuchi5.JPG');
 
     // TODO: errorがうまくhandlingされない
     face.detectFace(faceImage)
+        .catch(err => {            
+            let error = {
+                data: {
+                    error: 'face is not found.'
+                }
+            }
+            res.send(error);
+            throw err;
+        })
         .then(faceId => {
             return face.find(faceId);
+            
+        }).catch(err => {            
+            let error = {
+                data: {
+                    error: 'face is not registered.'
+                }
+            }
+            res.send(error);
+            throw err;
         }).then(persistedFaceId => {
             console.log(`detect ---------${persistedFaceId}`);
 
             return db.get(persistedFaceId);
+        }).catch(err => {            
+            let error = {
+                data: {
+                    error: 'DB error.'
+                }
+            }
+            res.send(error);
+            throw err;
         }).then(info => {
             console.log(info);
             const response = {'data': info};

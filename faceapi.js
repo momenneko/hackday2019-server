@@ -79,11 +79,11 @@ async function detectFace(img_b64) {
     } catch (err) {
         console.log('detect error----')
         console.log(err)
-        return;
+        return err;
     }    
 }
 
-// faceidからpersonidを取得
+// faceidからpersistFaceIdを取得
 async function findFromFaceList(faceId, faceListId = defaultFaceListId) {
     console.log(faceId, faceListId);
     if (faceId == null ) {
@@ -125,7 +125,7 @@ async function findFromFaceList(faceId, faceListId = defaultFaceListId) {
     } catch (err) {
         console.log('find error----')
         console.log(err)
-        return;
+        throw err;
     }
 }
 

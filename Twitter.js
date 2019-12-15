@@ -12,25 +12,24 @@ async function getTwitterProfile(username) {
     })
 
     var params = {screen_name: username, count:1};
-    let info = await client.get('statuses/user_timeline', params, function(error, tweets, response){
-        if (error) {
-            console.log(error);
-            return null;
-        }
-        var result = {
-            name : tweets[0].user.name,
-            image_url : tweets[0].user.profile_image_url_https,
-            description : tweets[0].user.description,
-            follow_amount : tweets[0].user.friends_count,
-            follower_amount : tweets[0].user.followers_count
-        }
+    let tweets = await client.get('statuses/user_timeline', params)
+    // if (error) {
+    //     console.log(error);
+    //     return null;
+    // }
+    console.log(tweets)
+    var result = {
+        name : tweets[0].user.name,
+        image_url : tweets[0].user.profile_image_url_https,
+        description : tweets[0].user.description,
+        follow_amount : tweets[0].user.friends_count,
+        follower_amount : tweets[0].user.followers_count
+    }
 
-        // TODO 本当はココでreturnして値を返したいが、同期処理の仕方が不明 prprmurakami
-        // => 解決
-        console.log(result);
-        return result;
-    });
-    return info;
+    // TODO 本当はココでreturnして値を返したいが、同期処理の仕方が不明 prprmurakami
+    // => 解決
+    console.log(result);
+    return result;
 }
 
 module.exports={
