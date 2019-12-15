@@ -25,41 +25,48 @@ app.post('/register', (req, res) => {
 
     // let face_b64 =  fs.readFileSync('./face_images/hashimoto.JPG');
     // const face_b64 = fs.readFileSync('./face_images/hashimoto_gopher.png');    
-    // const face_b64 = fs.readFileSync('./face_images/kikuchi.JPG');
-    let face_b64 = Buffer.from(face_image, 'base64');
+    const face_b64 = fs.readFileSync('./face_images/kikuchi.JPG');
+    // let face_b64 = Buffer.from(face_image, 'base64');
 
     // faceAPIに問い合わせ
     // asyncの即時関数で囲んでやる https://qiita.com/yukin01/items/1a36606439123525dc6d
-    (async() => {
-        // TODO : parallel
-        let faceId = await face.registerFace(face_b64).catch(() => {            
+    face.registerFace(face_b64).catch(err => {            
             let error = {
                 data: {
                     error: 'FACE IS NOT FOUND'
                 }
             }
             res.send(error);
-        });
+            throw err;
+    }).then(faceId => {
+        return getInfoFromAPI(faceId, twitter_id, github_id);
+    }).then(({faceId, twitter_info, github_info}) => {
 
-        let {twitter_info, github_info} = Promise.all(
-            [twitter.getTwitterProfile(twitter_id),
-            github.githubMain(github_id)]);
+        console.log(`faceId: ${faceId}`);
+        console.log(`twitter: ${twitter_info}`);
+        console.log(`github: ${github_info}`);
 
-        console.log(faceId);
-        console.log(twitter_info);
-        console.log(github_info);
-        
-        let saved = await db.register(faceId, username, twitter_info, github_info);
-        
+        return db.register(faceId, username, twitter_info, github_info);
+    }).then(() => {    
         // TODO: error handling
         // let response = JSON.stringify({});
         // res.send(response);
         res.send("OK");
-    })()    
-    // let github_info =  
-
+    
+    });
 });
 
+async function getInfoFromAPI(faceId, twitter_id, github_id) {
+    // let [twitter_info, github_info] = await Promise.all(
+    //     [twitter.getTwitterProfile(twitter_id),
+    //     github.githubMain(github_id)]);
+    let twitter_info = twitter.getTwitterProfile(twitter_id);
+    let github_info = github.githubMain(github_id);
+        console.log(twitter_info)
+        console.log(`1twitter: ${twitter_info}`);
+        console.log(`1github: ${github_info}`);
+        return {faceId, twitter_info, github_info};
+}
 async function registerUser(face_b64, twitter_id, github_id) {
     try {
         const faceId = await face.registerFace(face_b64);
