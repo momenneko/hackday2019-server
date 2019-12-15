@@ -27,17 +27,17 @@ async function get(faceId) {
     const strGitInfo = await getAsync("git-" + faceId);
 
     var twitter_info = {};
-    var git_info = {};
+    var github_info = {};
 
     // undefined対策
     if (strTwitterInfo != 'undefined') {
         twitter_info = JSON.parse(strTwitterInfo);
     }
     if (git_info != 'undefined') {
-        git_info = JSON.parse(strGitInfo);
+        github_info = JSON.parse(strGitInfo);
     }
 
-    return {name, twitter_info, git_info};
+    return {name, twitter_info, github_info};
 }
 
 module.exports={
