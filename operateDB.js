@@ -18,7 +18,6 @@ async function register(faceId, name, twitterInfo, gitInfoList){
     if (gitInfoList) {
         client.set("git-" + faceId, JSON.stringify(gitInfoList), redis.print);
     }
-    client.quit();
 }
 
 // 情報取得    
