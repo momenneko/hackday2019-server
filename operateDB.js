@@ -34,7 +34,7 @@ async function get(faceId) {
         twitter_info = JSON.parse(strTwitterInfo);
     }
     if (git_info != 'undefined') {
-        github_info = JSON.parse(strGitInfo);
+        github_info = {'language' : JSON.parse(strGitInfo)};
     }
 
     return {name, twitter_info, github_info};
