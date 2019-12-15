@@ -27,7 +27,7 @@ async function registerFace(img_b64, faceListId = defaultFaceListId) {
         return faceId;
     } catch (err) {
         console.log(err)
-        return;
+        throw err;
     }
 }
 

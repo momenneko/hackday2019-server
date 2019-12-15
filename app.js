@@ -25,16 +25,25 @@ app.post('/register', (req, res) => {
 
     // let face_b64 =  fs.readFileSync('./face_images/hashimoto.JPG');
     // const face_b64 = fs.readFileSync('./face_images/hashimoto_gopher.png');    
-    const face_b64 = fs.readFileSync('./face_images/kikuchi.JPG');
-    // let face_b64 = Buffer.from(face_image, 'base64');
+    // const face_b64 = fs.readFileSync('./face_images/kikuchi.JPG');
+    let face_b64 = Buffer.from(face_image, 'base64');
 
     // faceAPIに問い合わせ
     // asyncの即時関数で囲んでやる https://qiita.com/yukin01/items/1a36606439123525dc6d
     (async() => {
         // TODO : parallel
-        let faceId = await face.registerFace(face_b64);
-        let twitter_info = await twitter.getTwitterProfile(twitter_id);
-        let github_info = await github.githubMain(github_id);
+        let faceId = await face.registerFace(face_b64).catch(() => {            
+            let error = {
+                data: {
+                    error: 'FACE IS NOT FOUND'
+                }
+            }
+            res.send(error);
+        });
+
+        let {twitter_info, github_info} = Promise.all(
+            [twitter.getTwitterProfile(twitter_id),
+            github.githubMain(github_id)]);
 
         console.log(faceId);
         console.log(twitter_info);

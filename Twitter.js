@@ -27,7 +27,7 @@ async function getTwitterProfile(username) {
 
         // TODO 本当はココでreturnして値を返したいが、同期処理の仕方が不明 prprmurakami
         // => 解決
-        console.log(result);
+        // console.log(result);
         return result;
     });
     return info;
