@@ -2,7 +2,10 @@
 var twitter = require('twitter');
 require('dotenv').config();
 
-async function getTwitterProfile(username) { 
+async function getTwitterProfile(username) {
+    if (!username) {
+        return null;
+    }
     // 認証情報を設定（Twitter Appで発行したものを設定）
     const client = new twitter({
         consumer_key: process.env.CONSUMER_KEY,
@@ -17,7 +20,7 @@ async function getTwitterProfile(username) {
     //     console.log(error);
     //     return null;
     // }
-    console.log(tweets)
+    console.log("tweets" + tweets)
     var result = {
         name : tweets[0].user.name,
         image_url : tweets[0].user.profile_image_url_https,

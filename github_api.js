@@ -64,6 +64,9 @@ async function aggregateLanguageInformation(userName, repositories){
 
 // main function
 async function githubMain(userName){
+    if (!userName) {
+        return null;
+    }
     const repositories = await fetchRepositories(userName);
     const languageArray = await aggregateLanguageInformation(userName, repositories);
     return languageArray;
