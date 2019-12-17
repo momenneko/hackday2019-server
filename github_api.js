@@ -6,7 +6,7 @@ require('dotenv').config();
 var options = {
     'headers': {
         // NOTE: Add token to .env, or get 403 error! 
-        'Authorization': process.env.GIT_AUTH
+        'Authorization': 'token ' + process.env.GIT_AUTH
     }
 };
 
