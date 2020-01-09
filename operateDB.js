@@ -9,6 +9,7 @@ const getAsync = promisify(client.get).bind(client);
 async function register(faceId, name, twitterInfo, gitInfoList){
     client.on("error", function (err) {
         console.log("Error " + err);
+        throw err;
     });
     
     client.set("name-" + faceId, name, redis.print);

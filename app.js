@@ -23,6 +23,7 @@ app.post('/register', (req, res) => {
     const github_id = bodyjson.github_id;
     const face_image = bodyjson.face_image;
 
+    console.log("register-------");
     // let face_b64 =  fs.readFileSync('./face_images/hashimoto.JPG');
     // const face_b64 = fs.readFileSync('./face_images/hashimoto_gopher.png');    
     // const face_b64 = fs.readFileSync('./face_images/kikuchi4.JPG');
@@ -31,12 +32,7 @@ app.post('/register', (req, res) => {
     // faceAPIに問い合わせ
     // asyncの即時関数で囲んでやる https://qiita.com/yukin01/items/1a36606439123525dc6d
     face.registerFace(face_b64).catch(err => {            
-            let error = {
-                data: {
-                    error: 'face is not found.'
-                }
-            }
-            res.send(error);
+            res.send(errorResponse('face is not found.'));
             throw err;
     }).then(faceId => {
         return getInfoFromAPI(faceId, twitter_id, github_id);
@@ -58,12 +54,11 @@ app.post('/register', (req, res) => {
 
 async function getInfoFromAPI(faceId, twitter_id, github_id) {
     let [twitter_info, github_info] = await Promise.all(
-        [twitter.getTwitterProfile(twitter_id),
-        github.githubMain(github_id)]);
-    // let twitter_info = await twitter.getTwitterProfile(twitter_id);
-    // let github_info = await github.githubMain(github_id);
-        console.log(`1twitter: ${twitter_info}`);
-        console.log(`1github: ${github_info}`);
+        [
+            twitter.getTwitterProfile(twitter_id),
+            github.githubMain(github_id)
+        ]);
+
         return {faceId, twitter_info, github_info};
 }
 
@@ -78,36 +73,21 @@ app.post('/getinfo', (req, res) => {
     // TODO: errorがうまくhandlingされない
     face.detectFace(faceImage)
         .catch(err => {            
-            let error = {
-                data: {
-                    error: 'face is not found.'
-                }
-            }
-            res.send(error);
+            res.send(errorResponse('face is not found.'));
             throw err;
         })
         .then(faceId => {
             return face.find(faceId);
             
-        }).catch(err => {            
-            let error = {
-                data: {
-                    error: 'face is not registered.'
-                }
-            }
-            res.send(error);
+        }).catch(err => {
+            res.send(errorResponse('face is not registered.'));
             throw err;
         }).then(persistedFaceId => {
             console.log(`detect ---------${persistedFaceId}`);
 
             return db.get(persistedFaceId);
         }).catch(err => {            
-            let error = {
-                data: {
-                    error: 'DB error.'
-                }
-            }
-            res.send(error);
+            res.send(errorResponse('DB error.'));
             throw err;
         }).then(info => {
             console.log(info);
@@ -129,4 +109,8 @@ app.post('/create/person-group', (req, res) => {
     res.send("ok");
 })
 
-app.listen(3000, () => console.log('Example app listening on port 3000!'));
+const errorResponse = msg => {
+    return { data: {error: msg} }
+}
+
+app.listen(3000, () => console.log('listening on port 3000!'));

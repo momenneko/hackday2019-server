@@ -65,7 +65,7 @@ async function detectFace(img_b64) {
         let body = await rp(options)
         let parsedBody = JSON.parse(body)
 
-        if (parsedBody == null) {
+        if (parsedBody == null || parsedBody.length === 0) {
             throw new Error('face cannot be deteced');
         }
         
@@ -79,7 +79,7 @@ async function detectFace(img_b64) {
     } catch (err) {
         console.log('detect error----')
         console.log(err)
-        return err;
+        throw err;
     }    
 }
 
@@ -127,10 +127,6 @@ async function findFromFaceList(faceId, faceListId = defaultFaceListId) {
         console.log(err)
         throw err;
     }
-}
-
-let foo = () => {
-    return 1;
 }
 
 module.exports={

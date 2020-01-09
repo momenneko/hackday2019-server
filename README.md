@@ -26,4 +26,5 @@ GIT_AUTH={auth token}
  ```
 
 2. `npm install`
-3. `node app`
+3. `redis-server`
+4. `node app`
